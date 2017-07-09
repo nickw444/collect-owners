@@ -14,6 +14,7 @@ func main() {
 
 		repo          = app.Arg("repo", "Path to repository").Required().String()
 		contributors  = app.Flag("contributors", "Path to contributors file to add to the users DB").String()
+		excludes      = app.Flag("exclude", "Owners file path exclude patterns").Strings()
 		addUnresolved = app.Flag("add-unresolved", "Add ownerships that do not have entries in the users DB as their raw entries within the OWNERS files").Bool()
 	)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
@@ -24,6 +25,7 @@ func main() {
 	formatter := &OwnersFileFormatter{}
 	fileProvider := &FileProvider{
 		RepoRoot: repoRoot,
+		Excludes: *excludes,
 	}
 	fileProcessor := &OwnersFileProcessor{
 		RepoRoot: repoRoot,

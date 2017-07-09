@@ -8,6 +8,7 @@ import (
 
 type FileProvider struct {
 	RepoRoot string
+	Excludes []string
 }
 
 // Returns an array of files relative to the repository root dir.
@@ -26,9 +27,13 @@ func (f *FileProvider) GetFiles() (files []string, err error) {
 			return
 		}
 
-		isExclude := strings.Contains(fPath, "/target/")
+		if isMatch {
+			for _, exclude := range f.Excludes {
+				if strings.Contains(fPath, exclude) {
+					return
+				}
+			}
 
-		if isMatch && !isExclude {
 			files = append(files, fPath)
 		}
 
