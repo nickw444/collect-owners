@@ -30,7 +30,7 @@ func main() {
 	}
 
 	var dbLoader usernamedb.DBLoader
-	if contributors != nil {
+	if *contributors != "" {
 		dbLoader = &usernamedb.ContributorsFileDBLoader{
 			Filename: *contributors,
 		}
