@@ -1,6 +1,25 @@
 language: go
 go:
-  - 1.x
-  - 1.7
-  - 1.8
-  - master
+- 1.x
+- 1.7
+- 1.8
+- master
+
+before_deploy:
+  - mkdir release
+  - GOOS=linux GOARCH=amd64 go build -o release/collect-owners-linux-amd64
+  - GOOS=linux GOARCH=arm64 go build -o release/collect-owners-linux-arm64
+  - GOOS=darwin GOARCH=amd64 go build -o release/collect-owners-darwin-amd64
+  - GOOS=windows GOARCH=amd64 go build -o release/collect-owners-windows-amd64
+deploy:
+  provider: releases
+  api_key:
+    secure: I+ttR60o4HYFOQDwbsQklXZGwjtUF5QxF3QLMG7Gdwc6K+S4BYRe3/NqLetDXQTGvwtHY1cyFx9mreEuV3xuHApEgLkKwLjBRzOL6TPm/CF+fAoiqFlW5tsVdD0YeGjFusB+xFf2GRpZ+R5m41CC468pw+7/6zplwDh5mQdTarXkpcuS0Q200D2IDN/IIl8TQ9zIk0w5P3WsFN4IQkdyn6oKYRikhbyZeli1o66fhUB37qT1hkOCuYXgoyru5Oyrsk9OFMtLE9hU6lXnF8axWQM49UO7rCGJ6mtbV8V8zXMpnMH2MN0utxPkOygfVN0gy8QZpbE7H4lvxWAJCI6eqXQEYuxxnq4TVZ3zi4ygutsg2UVRg8kPQdatMzobWKqeHz3Zqi+8Rz9ATa4yF8mtJNnxCyWcaQMnY2StlY7vvycuVnFD+HoF0a9sL2bSIejOH0E/jNPYfSjHijLyNAXNX6EeX2GDR2qDokTYzy2LWHDrRgbquBeRqO3mC52Tw+orZCmWhbCDO05r31IyMj0CcgdJL76UElhaE6TdyYzs7DmCwtX5BJSUaIC2OA3OmTs0KpIakggEDa3B5Rd5I8bnmBgHplnj8UqBZq9ys64iX68H5knsPr5Zutw+uZMMg+qToRSVf/LhVlNU7K2qR26aVBO3fbcZlH1rEzmN/uI18yo=
+  file:
+    - release/collect-owners-linux-amd64
+    - release/collect-owners-linux-arm64
+    - release/collect-owners-darwin-amd64
+    - release/collect-owners-windows-amd64
+  on:
+    repo: nickw444/collect-owners
+    tags: true

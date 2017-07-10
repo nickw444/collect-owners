@@ -1,3 +1,4 @@
 collect-owners
 *.sublime-project
 *.sublime-workspace
+release
