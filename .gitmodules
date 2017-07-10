@@ -1,0 +1,3 @@
+[submodule "collect-owners-demo"]
+	path = collect-owners-demo
+	url = git@github.com:nickw444/collect-owners-demo.git
