@@ -7,10 +7,12 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
+var Version string
+
 func main() {
 
 	var (
-		app = kingpin.New("Collect Owners", "Walk A Repo and compile a Github CODEOWNERS file")
+		app = kingpin.New("Collect Owners", "Walk A Repo and compile a Github CODEOWNERS file").Version(Version)
 
 		repo          = app.Arg("repo", "Path to repository").Required().String()
 		contributors  = app.Flag("contributors", "Path to contributors file to add to the users DB").String()

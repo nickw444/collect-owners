@@ -6,11 +6,7 @@ go:
 - master
 
 before_deploy:
-  - mkdir release
-  - GOOS=linux GOARCH=amd64 go build -o release/collect-owners-linux-amd64
-  - GOOS=linux GOARCH=arm64 go build -o release/collect-owners-linux-arm64
-  - GOOS=darwin GOARCH=amd64 go build -o release/collect-owners-darwin-amd64
-  - GOOS=windows GOARCH=amd64 go build -o release/collect-owners-windows-amd64
+  - bin/deploy-compile.sh
 deploy:
   provider: releases
   api_key:
