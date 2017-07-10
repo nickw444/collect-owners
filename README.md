@@ -25,10 +25,11 @@ Precompiled binaries are available from Github Releases, [here](//github.com/nic
 
 ## Demo
 ```
-./collect-owners ./demo --add-unresolved
-*                       @nickw444/rootowner
-component1/*            @octocat
-component1/component2/* @nickw444
-component2/*            @nickw444
-compontent3/*           @octocat
+./collect-owners ./collect-owners-demo --add-unresolved
+*                  @nickw444
+component1/A/*     @nickw444-collect-owners-demo-2
+component1/A/*.js  @nickw444-collect-owners-demo-1
+component1/C/*     @nickw444-collect-owners-demo-2
+component1/D/D.es6 @nickw444-collect-owners-demo-2
+component1/*       @nickw444-collect-owners-demo-1
 ```
