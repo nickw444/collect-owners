@@ -1,5 +1,6 @@
 Collect OWNERS files and output in a format compatible with Github CODEOWNERS file.
 
+[![Build Status](https://travis-ci.org/nickw444/collect-owners.svg?branch=master)](https://travis-ci.org/nickw444/collect-owners)
 
 ## Usage:
 ```
@@ -16,6 +17,10 @@ Flags:
 Args:
   <repo>  Path to repository
 ```
+
+## Download
+
+Precompiled binaries are available from Github Releases, [here](//github.com/nickw444/collect-owners/releases)
 
 
 ## Demo
