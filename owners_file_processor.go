@@ -6,81 +6,12 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-
-	"github.com/nickw444/collect-owners/usernamedb"
 )
 
 type ownersFileContent struct {
 	path       string
 	dirOwners  []string
 	fileOwners map[string][]string // Email addresses of owners.
-}
-
-// OwnersFileEntry is a mapping of a glob'd path to a list of owner GH usernames
-type OwnersFileEntry struct {
-	Glob   string
-	Owners []string // Usernames that have been processed by UsernameDB.
-}
-
-// OwnersWalker walks given owners files to produce an array of OwnersWalkerEntries.
-type OwnersWalker struct {
-	UsernameDB    usernamedb.UsernameDB
-	RepoRoot      string
-	FileProvider  *FileProvider
-	FileProcessor *OwnersFileProcessor
-
-	fileContent []*ownersFileContent
-}
-
-func (o *OwnersWalker) Walk() (err error) {
-	o.fileContent = []*ownersFileContent{}
-	ownerFiles, err := o.FileProvider.GetFiles()
-	if err != nil {
-		return
-	}
-
-	for _, file := range ownerFiles {
-		content, err := o.FileProcessor.getOwnersForFile(file)
-		if err != nil {
-			return err
-		}
-		o.fileContent = append(o.fileContent, content)
-	}
-
-	return
-}
-
-func (o *OwnersWalker) CollectEntries() (entries []*OwnersFileEntry) {
-
-	for _, content := range o.fileContent {
-
-		// Add an entry for the Directory:
-		dirOwnersUsernames := o.UsernameDB.ToUsernames(content.dirOwners)
-		if len(dirOwnersUsernames) > 0 {
-			dirGlob := content.path + "*"
-			entry := &OwnersFileEntry{
-				Glob:   dirGlob,
-				Owners: dirOwnersUsernames,
-			}
-			entries = append(entries, entry)
-		}
-
-		// Add an entry for each per-file entry:
-		for fileGlob, fileOwners := range content.fileOwners {
-			fileOwnersUsernames := o.UsernameDB.ToUsernames(fileOwners)
-			if len(fileOwnersUsernames) > 0 {
-				glob := path.Join(content.path, fileGlob)
-				entry := &OwnersFileEntry{
-					Glob:   glob,
-					Owners: fileOwnersUsernames,
-				}
-				entries = append(entries, entry)
-			}
-		}
-
-	}
-
-	return
 }
 
 type OwnersFileProcessor struct {

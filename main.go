@@ -5,6 +5,7 @@ import (
 
 	"github.com/nickw444/collect-owners/usernamedb"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"regexp"
 )
 
 var Version string
@@ -16,22 +17,13 @@ func main() {
 
 		repo          = app.Arg("repo", "Path to repository").Required().String()
 		contributors  = app.Flag("contributors", "Path to contributors file to add to the users DB").String()
-		excludes      = app.Flag("exclude", "Owners file path exclude patterns").Strings()
+		excludesRaw   = app.Flag("exclude", "Regular expressions of paths to exclude").Strings()
 		addUnresolved = app.Flag("add-unresolved", "Add ownerships that do not have entries in the users DB as their raw entries within the OWNERS files").Bool()
 	)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	var err error
 	repoRoot := *repo
-
-	formatter := &OwnersFileFormatter{}
-	fileProvider := &FileProvider{
-		RepoRoot: repoRoot,
-		Excludes: *excludes,
-	}
-	fileProcessor := &OwnersFileProcessor{
-		RepoRoot: repoRoot,
-	}
 
 	var dbLoader usernamedb.DBLoader
 	if *contributors != "" {
@@ -42,7 +34,7 @@ func main() {
 		dbLoader = &usernamedb.SimpleDBLoader{}
 	}
 
-	usernameDb := usernamedb.UsernameDB{
+	usernameDb := &usernamedb.UsernameDB{
 		Loader:        dbLoader,
 		AddUnresolved: *addUnresolved,
 	}
@@ -51,17 +43,29 @@ func main() {
 		panic(err)
 	}
 
-	walker := OwnersWalker{
-		UsernameDB:    usernameDb,
-		RepoRoot:      repoRoot,
-		FileProvider:  fileProvider,
-		FileProcessor: fileProcessor,
+	formatter := &OwnersFileFormatter{
+		UsernameDB: usernameDb,
 	}
 
-	err = walker.Walk()
+	fileProcessor := &OwnersFileProcessor{
+		RepoRoot: repoRoot,
+	}
+
+	var excludes []*regexp.Regexp
+	for _, excludeRaw := range *excludesRaw {
+		excludes = append(excludes, regexp.MustCompile(excludeRaw))
+	}
+
+	treeProvider := OwnersTreeProvider{
+		ownersFileProcessor: fileProcessor,
+		RootPath:            repoRoot,
+		Excludes:            excludes,
+	}
+
+	rootEnt, err := treeProvider.GetFileTree()
 	if err != nil {
 		panic(err)
 	}
-	entries := walker.CollectEntries()
-	formatter.Format(entries)
+
+	formatter.Format(rootEnt)
 }

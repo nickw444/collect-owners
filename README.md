@@ -1,4 +1,4 @@
-Collect OWNERS files and output in a format compatible with Github CODEOWNERS file.
+Walk a Chromium style OWNERS system and output a Github compatible CODEOWNERS file Edit
 
 [![Build Status](https://travis-ci.org/nickw444/collect-owners.svg?branch=master)](https://travis-ci.org/nickw444/collect-owners)
 
@@ -27,9 +27,10 @@ Precompiled binaries are available from Github Releases, [here](//github.com/nic
 ```
 ./collect-owners ./collect-owners-demo --add-unresolved
 *                  @nickw444
+component1/*       @nickw444-collect-owners-demo-1
 component1/A/*     @nickw444-collect-owners-demo-2
 component1/A/*.js  @nickw444-collect-owners-demo-1
+component1/B/*     @nickw444-collect-owners-demo-1
 component1/C/*     @nickw444-collect-owners-demo-2
 component1/D/D.es6 @nickw444-collect-owners-demo-2
-component1/*       @nickw444-collect-owners-demo-1
 ```
