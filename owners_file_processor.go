@@ -25,24 +25,28 @@ var (
 
 // Reads a line and determines if it's a file:// or an owner email and
 // handles accordingly.
-func (o *OwnersFileProcessor) getOwners(fileOrOwner string) ([]string, error) {
+func (o *OwnersFileProcessor) getOwners(currDir string, fileOrOwner string) ([]string, error) {
 	filePathMatch := filePathRegex.FindAllStringSubmatch(fileOrOwner, -1)
 	if filePathMatch != nil {
-		next_file := filePathMatch[0][1]
-		if strings.HasPrefix(next_file, "/") {
-			// File is relative to the repo root. Strip the leading slash
-			next_file = next_file[1:]
-		} else {
-			// Need to resolve the path
-			dir, _ := filepath.Split(fileOrOwner)
-			next_file = path.Join(dir, next_file)
+		nextFile := o.getFileImportPath(currDir, filePathMatch[0][1])
+		content, err := o.getOwnersForFile(nextFile)
+		if err != nil {
+			return nil, err
 		}
 
-		content, err := o.getOwnersForFile(next_file)
 		return content.dirOwners, err
-
 	}
 	return []string{fileOrOwner}, nil
+}
+
+func (o *OwnersFileProcessor) getFileImportPath(currDir string, filename string) string {
+	if strings.HasPrefix(filename, "/") {
+		// File is relative to the repo root. Strip the leading slash
+		return filename[1:]
+	} else {
+		// Need to resolve the path
+		return path.Join(currDir, filename)
+	}
 }
 
 func (o *OwnersFileProcessor) getOwnersForFile(filename string) (content *ownersFileContent, err error) {
@@ -56,6 +60,7 @@ func (o *OwnersFileProcessor) getOwnersForFile(filename string) (content *owners
 	content = &ownersFileContent{}
 	content.path = dir
 	content.fileOwners = make(map[string][]string)
+	content.dirOwners = make([]string, 0)
 
 	for _, line := range fileContent {
 		line := strings.Trim(line, " \n")
@@ -74,7 +79,7 @@ func (o *OwnersFileProcessor) getOwnersForFile(filename string) (content *owners
 		perFileMatches := perFileRegex.FindAllStringSubmatch(line, -1)
 		if perFileMatches != nil {
 			fileGlob := perFileMatches[0][1]
-			owners, err := o.getOwners(perFileMatches[0][2])
+			owners, err := o.getOwners(dir, perFileMatches[0][2])
 			if err != nil {
 				return nil, err
 			}
@@ -86,7 +91,7 @@ func (o *OwnersFileProcessor) getOwnersForFile(filename string) (content *owners
 			continue
 		}
 
-		owners, err := o.getOwners(line)
+		owners, err := o.getOwners(dir, line)
 		if err != nil {
 			return nil, err
 		}

@@ -1,0 +1,3 @@
+bar@baz.com
+per-file *.js=js@example.com
+per-file file.es6=file@example.com
