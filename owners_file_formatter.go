@@ -31,7 +31,6 @@ func (o *OwnersFileFormatter) Format(rootEntry *DirEntry) {
 }
 
 func (o *OwnersFileFormatter) buildRules(entry *DirEntry) (rules []*OwnershipRule) {
-
 	rootGlob := entry.Path
 	if len(rootGlob) > 0 {
 		rootGlob += "/*"
@@ -39,12 +38,14 @@ func (o *OwnersFileFormatter) buildRules(entry *DirEntry) (rules []*OwnershipRul
 		rootGlob += "*"
 	}
 
-	rootRule := &OwnershipRule{
-		Glob:   rootGlob,
-		Owners: entry.DirOwners,
-	}
+	if len(entry.DirOwners) > 0 {
+		rootRule := &OwnershipRule{
+			Glob:   rootGlob,
+			Owners: entry.DirOwners,
+		}
 
-	rules = append(rules, rootRule)
+		rules = append(rules, rootRule)
+	}
 
 	for fileGlob, fileOwners := range entry.FileOwners {
 		rule := &OwnershipRule{
