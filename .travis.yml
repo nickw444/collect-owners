@@ -1,9 +1,5 @@
 language: go
-go:
-  - 1.7
-  - 1.8
-  - 1.x
-  - master
+go: 1.8.x
 
 before_deploy:
   - bin/deploy-compile.sh
@@ -19,4 +15,3 @@ deploy:
   on:
     repo: nickw444/collect-owners
     tags: true
-    go: 1.x
