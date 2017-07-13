@@ -1,4 +1,4 @@
-Walk a Chromium style OWNERS system and output a Github compatible CODEOWNERS file Edit
+Walk a Chromium style OWNERS system and output a Github compatible [CODEOWNERS](https://github.com/blog/2392-introducing-code-owners) file
 
 [![Build Status](https://travis-ci.org/nickw444/collect-owners.svg?branch=master)](https://travis-ci.org/nickw444/collect-owners)
 
